@@ -10,9 +10,7 @@ import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
 import com.springecommerce.entity.OrderProduct;
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.CustomerNotFoundException;
-import com.springecommerce.error.OrderProductNotFoundException;
-import com.springecommerce.error.ProductNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.OrderProductRepository;
 import com.springecommerce.service.CustomerService;
 import com.springecommerce.service.OrderService;
@@ -54,7 +52,7 @@ class OrderProductServiceImplTest {
     }
 
     @Test
-    public void testAddToCart() throws ProductNotFoundException, CustomerNotFoundException {
+    public void testAddToCart() throws CustomException{
         Long customerId = 1L;
         Long productId = 1L;
         Customer customer = new Customer();
@@ -89,7 +87,7 @@ class OrderProductServiceImplTest {
 
     @Test
     @DisplayName("Test add to cart to product already in the cart")
-    public void testAddToCart_alreadyExistsProduct() throws ProductNotFoundException, CustomerNotFoundException {
+    public void testAddToCart_alreadyExistsProduct() throws CustomException {
         Long customerId = 1L;
         Long productId = 1L;
         Integer quantity = 1;
@@ -118,7 +116,7 @@ class OrderProductServiceImplTest {
     }
 
     @Test
-    public void testRemoveFromCart() throws CustomerNotFoundException, ProductNotFoundException, OrderProductNotFoundException {
+    public void testRemoveFromCart() throws CustomException {
         Long customerId = 1L;
         Long productId = 1L;
 
@@ -149,7 +147,7 @@ class OrderProductServiceImplTest {
     }
 
     @Test
-    public void testRemoveFromCart_whenProductDoesnotExist_inCart() throws CustomerNotFoundException, ProductNotFoundException, OrderProductNotFoundException {
+    public void testRemoveFromCart_whenProductDoesnotExist_inCart() throws CustomException {
         Long customerId = 1L;
         Long productId = 1L;
         Customer customer = new Customer();
@@ -166,7 +164,7 @@ class OrderProductServiceImplTest {
         when(this.productService.getProductById(productId)).thenReturn(product);
         when(this.orderProductRepository.findByOrderAndProduct(order, product)).thenReturn(Optional.empty());
 
-        assertThrows(OrderProductNotFoundException.class, () -> {
+        assertThrows(CustomException.class, () -> {
             this.orderProductService.removeFromCart(customerId, productId);
         });
         verify(this.orderProductRepository, Mockito.never()).deleteByOrderAndProduct(order, product);
@@ -174,7 +172,7 @@ class OrderProductServiceImplTest {
     }
 
     @Test
-    public void testOpenCart() throws CustomerNotFoundException {
+    public void testOpenCart() throws CustomException {
         Long customerId = 1L;
         Long orderId = 1L;
         Customer customer = new Customer();
@@ -197,7 +195,7 @@ class OrderProductServiceImplTest {
     }
 
     @Test
-    public void testClearCart() throws CustomerNotFoundException {
+    public void testClearCart() throws CustomException {
         Long customerId = 1L;
         Long orderId = 1L;
         Customer customer = new Customer();

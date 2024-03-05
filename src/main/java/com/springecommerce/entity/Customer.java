@@ -35,23 +35,21 @@ public class Customer {
             strategy = GenerationType.IDENTITY
     )
     private Long customerId;
-    private @NotBlank(
-            message = "please add First name"
-    ) String firstName;
-    private @NotBlank(
-            message = "please add Last name"
-    ) String lastName;
-    private @Email(
-            message = "please add valid mail"
-    ) @NotBlank(
-            message = "please add email"
-    ) String email;
-    private @NotBlank(
-            message = "please add password"
-    ) @Length(
-            max = 20,
-            min = 4
-    ) String password;
+
+    @NotBlank(message = "please add First name")
+    private String firstName;
+
+    @NotBlank(message = "please add Last name")
+    private String lastName;
+
+    @Email(message = "please add valid mail")
+    @NotBlank(message = "please add email")
+    private String email;
+
+    @NotBlank(message = "please add password")
+    @Length(max = 20, min = 4)
+    private String password;
+
     @OneToMany(
             mappedBy = "customer",
             fetch = FetchType.EAGER,

@@ -4,9 +4,8 @@ import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
 import com.springecommerce.entity.OrderProduct;
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.EmpytCartException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.OrderRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -87,7 +86,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    public void testConfirmOrderWithProductsInCart() throws EmpytCartException {
+    public void testConfirmOrderWithProductsInCart() throws CustomException {
 
         Product product1 = Product.builder().price(100).build();
 
@@ -119,7 +118,7 @@ class OrderServiceImplTest {
 
         when(orderRepository.findFirstByCustomer_CustomerIdAndConfirmedFalse(customerId)).thenReturn(order);
 
-        Assertions.assertThrows(EmpytCartException.class, () -> {
+        assertThrows(CustomException.class, () -> {
             orderService.confirmOrder(customerId, deliveryAddress);
         });
         verify(orderRepository, never()).save(ArgumentMatchers.any());

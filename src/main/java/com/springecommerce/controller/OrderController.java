@@ -1,12 +1,11 @@
 package com.springecommerce.controller;
 
 import com.springecommerce.entity.Order;
-import com.springecommerce.error.EmpytCartException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.service.OrderService;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/orders"})
 public class OrderController {
+    private final OrderService orderService;
 
-    @Autowired
-    private OrderService orderService;
-
-    public OrderController() {
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @GetMapping
@@ -30,7 +28,7 @@ public class OrderController {
 
     @PutMapping({"/confirm"})
     public Order confirmOrder(@RequestParam Long customerId,
-                              @RequestParam String deliveryAddress) throws EmpytCartException {
+                              @RequestParam String deliveryAddress) throws CustomException {
         return orderService.confirmOrder(customerId, deliveryAddress);
     }
 }

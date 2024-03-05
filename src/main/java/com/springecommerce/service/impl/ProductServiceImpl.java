@@ -2,10 +2,10 @@
 package com.springecommerce.service.impl;
 
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.ProductNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.ProductRepository;
 import com.springecommerce.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +14,11 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @Override
     public Product saveProduct(Product product) {
@@ -29,10 +31,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductById(Long productId) throws ProductNotFoundException {
+    public Product getProductById(Long productId) throws CustomException {
         Optional<Product> product = productRepository.findById(productId);
         if (!product.isPresent()) {
-            throw new ProductNotFoundException("No such Product with this id");
+            throw new CustomException("No such Product with this id", HttpStatus.NOT_FOUND);
         }
         return product.get();
     }
@@ -63,10 +65,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProductById(Long productId, Product product) throws ProductNotFoundException {
+    public Product updateProductById(Long productId, Product product) throws CustomException {
         Optional<Product> productDB = productRepository.findById(productId);
         if (!productDB.isPresent()) {
-            throw new ProductNotFoundException("No such Product with this id");
+            throw new CustomException("No such Product with this id",HttpStatus.NOT_FOUND);
         }
         Product productDB2 = productDB.get();
 

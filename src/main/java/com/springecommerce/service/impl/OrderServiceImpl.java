@@ -3,14 +3,11 @@ package com.springecommerce.service.impl;
 import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
 import com.springecommerce.entity.OrderProduct;
-import com.springecommerce.error.CustomerAlreadyOwnUnconfimedOrderException;
-import com.springecommerce.error.EmpytCartException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.OrderRepository;
-import com.springecommerce.service.CustomerService;
 import com.springecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,9 +15,11 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    public OrderServiceImpl(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     @Override
     public Order addOrder(Customer customer) {
@@ -61,10 +60,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order confirmOrder(Long customerId, String deliveryAddress) throws EmpytCartException {
+    public Order confirmOrder(Long customerId, String deliveryAddress) throws CustomException {
         Order order = getCurrentCustomerOrder(customerId);
         if(order.getOrderProducts().isEmpty()){
-            throw new EmpytCartException("Cannot Confirm Order without adding products");
+            throw new CustomException("Cannot Confirm Order without adding products", HttpStatus.NOT_ACCEPTABLE);
         }
         order.setDeliveryAddress(deliveryAddress);
         order.setOrderDate(LocalDate.now());

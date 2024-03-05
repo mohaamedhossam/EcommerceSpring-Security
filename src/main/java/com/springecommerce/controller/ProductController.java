@@ -1,13 +1,12 @@
 package com.springecommerce.controller;
 
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.ProductNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.service.ProductService;
 import jakarta.validation.Valid;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/products"})
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @PostMapping
     public Product saveProduct(@RequestBody @Valid Product product) {
@@ -34,13 +36,13 @@ public class ProductController {
     }
 
     @GetMapping({"/{id}"})
-    public Product getProductById(@PathVariable("id") Long productId) throws ProductNotFoundException {
+    public Product getProductById(@PathVariable("id") Long productId) throws CustomException {
         return productService.getProductById(productId);
     }
 
     @PutMapping({"/{id}"})
     public Product updateProductById(@PathVariable("id") Long productId,
-                                     @RequestBody Product product) throws ProductNotFoundException {
+                                     @RequestBody Product product) throws CustomException {
         return productService.updateProductById(productId, product);
     }
 

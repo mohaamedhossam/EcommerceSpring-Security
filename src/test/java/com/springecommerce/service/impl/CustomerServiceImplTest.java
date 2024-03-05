@@ -2,7 +2,7 @@ package com.springecommerce.service.impl;
 
 import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
-import com.springecommerce.error.CustomerNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.CustomerRepository;
 import com.springecommerce.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void saveCustomer_Success() throws CustomerNotFoundException {
+    void saveCustomer_Success() throws CustomException {
         Order order = new Order();
         when(this.orderService.addOrder(any())).thenReturn(order);
 
@@ -58,7 +58,7 @@ class CustomerServiceImplTest {
     }
 
     @Test
-    void login_Success() throws CustomerNotFoundException {
+    void login_Success() throws CustomException {
         Customer customer = Customer.builder().email("test@gmail.com").password("password").build();
         when(customerRepository.findCustomerByEmailAndPassword("test@gmail.com", "password")).thenReturn(Optional.of(customer));
 
@@ -70,7 +70,7 @@ class CustomerServiceImplTest {
     @Test
     void login_CustomerNotFound() {
         when(customerRepository.findCustomerByEmailAndPassword("notfound@gmail.com", "password")).thenReturn(Optional.empty());
-        assertThrows(CustomerNotFoundException.class, () -> {
+        assertThrows(CustomException.class, () -> {
             customerService.login("email@example.com", "password");
         });
     }

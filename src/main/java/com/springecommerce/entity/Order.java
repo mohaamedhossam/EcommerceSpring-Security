@@ -21,26 +21,23 @@ import java.util.List;
 )
 public class Order {
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
-    @ManyToOne(
-            cascade = {CascadeType.ALL}
-    )
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(
             name = "customer_id",
             referencedColumnName = "customerId"
     )
-    private @NotNull(
-            message = "please add Customer ID"
-    ) Customer customer;
+     @NotNull(message = "please add Customer ID")
+    private Customer customer;
+
     private LocalDate orderDate;
     private int totalAmount;
     private String deliveryAddress;
     private LocalDate expectedDeliveryDate;
     private boolean confirmed = false;
+
     @OneToMany(
             mappedBy = "order",
             cascade = {CascadeType.ALL}

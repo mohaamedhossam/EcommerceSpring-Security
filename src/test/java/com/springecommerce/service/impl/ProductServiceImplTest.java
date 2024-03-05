@@ -1,7 +1,7 @@
 package com.springecommerce.service.impl;
 
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.ProductNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +66,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void testGetProductById() throws ProductNotFoundException {
+    void testGetProductById() throws CustomException {
         Long productId = 1L;
         Product product = new Product(1L, "Product 1", "Category a", 100);
 
@@ -83,13 +83,13 @@ class ProductServiceImplTest {
     void whenGetProductById_thenProductNotFoundException() {
         Long productId = 1L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
-        Assertions.assertThrows(ProductNotFoundException.class, () -> {
+        Assertions.assertThrows(CustomException.class, () -> {
             productService.getProductById(productId);
         });
     }
 
     @Test
-    public void testUpdateProductById() throws ProductNotFoundException {
+    public void testUpdateProductById() throws CustomException {
         Product existingProduct = new Product(1L, "Existing Product", "Category a", 100);
 
         Product updatedProduct = new Product();

@@ -2,7 +2,8 @@ package com.springecommerce.service;
 
 import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
-import com.springecommerce.error.EmpytCartException;
+import com.springecommerce.error.CustomException;
+
 import java.util.List;
 
 public interface OrderService {
@@ -16,5 +17,5 @@ public interface OrderService {
 
     void computeAndUpdateTotalAmount(Order order);
 
-    Order confirmOrder(Long customerId, String deliveryAddress) throws EmpytCartException;
+    Order confirmOrder(Long customerId, String deliveryAddress) throws CustomException;
 }

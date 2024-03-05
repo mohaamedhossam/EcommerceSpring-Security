@@ -21,26 +21,21 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Review {
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewID;
-    @ManyToOne(
-            cascade = {CascadeType.ALL}
-    )
+
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(
             name = "product_id",
-            referencedColumnName = "productId"
-    )
+            referencedColumnName = "productId")
     private Product product;
-    @ManyToOne(
-            cascade = {CascadeType.ALL}
-    )
+
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(
             name = "customer_id",
-            referencedColumnName = "customerId"
-    )
+            referencedColumnName = "customerId")
     @JsonIgnore
     private Customer customer;
+
     private String comment;
 }

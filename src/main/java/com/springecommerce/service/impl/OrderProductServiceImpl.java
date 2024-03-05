@@ -5,16 +5,14 @@ import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
 import com.springecommerce.entity.OrderProduct;
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.CustomerNotFoundException;
-import com.springecommerce.error.OrderProductNotFoundException;
-import com.springecommerce.error.ProductNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.OrderProductRepository;
 import com.springecommerce.service.CustomerService;
 import com.springecommerce.service.OrderProductService;
 import com.springecommerce.service.OrderService;
 import com.springecommerce.service.ProductService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,20 +21,24 @@ import java.util.Optional;
 @Service
 public class OrderProductServiceImpl implements OrderProductService {
 
-    @Autowired
-    private OrderProductRepository orderProductRepository;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderProductRepository orderProductRepository;
 
-    @Autowired
-    private ProductService productService;
+    private final OrderService orderService;
 
-    @Autowired
-    private CustomerService customerService;
+    private final ProductService productService;
+
+    private final CustomerService customerService;
+
+    public OrderProductServiceImpl(OrderProductRepository orderProductRepository, OrderService orderService, ProductService productService, CustomerService customerService) {
+        this.orderProductRepository = orderProductRepository;
+        this.orderService = orderService;
+        this.productService = productService;
+        this.customerService = customerService;
+    }
 
     @Override
-    public OrderProduct addToCart(Long customerId, Long productId, Integer quantity) throws ProductNotFoundException, CustomerNotFoundException {
+    public OrderProduct addToCart(Long customerId, Long productId, Integer quantity) throws CustomException{
 
         Customer customer = customerService.getCustomerById(customerId); // to check if ther is a customer with this id
         Order order = orderService.getCurrentCustomerOrder(customerId);
@@ -59,14 +61,14 @@ public class OrderProductServiceImpl implements OrderProductService {
 
     @Override
     @Transactional
-    public void removeFromCart(Long customerId, Long productId) throws CustomerNotFoundException, ProductNotFoundException, OrderProductNotFoundException {
+    public void removeFromCart(Long customerId, Long productId) throws CustomException {
         Customer customer = customerService.getCustomerById(customerId);
         Order order = orderService.getCurrentCustomerOrder(customerId);
         Product product = productService.getProductById(productId);
 
         Optional<OrderProduct> orderProduct = orderProductRepository.findByOrderAndProduct(order,product);
         if (!orderProduct.isPresent()) {
-            throw new OrderProductNotFoundException("No such product to delete");
+            throw new CustomException("No such product to delete", HttpStatus.NOT_FOUND);
         }
 
         orderProductRepository.deleteByOrderAndProduct(order,product);
@@ -74,7 +76,7 @@ public class OrderProductServiceImpl implements OrderProductService {
     }
 
     @Override
-    public List<ProductQuantityDTO> openCart(Long customerId) throws CustomerNotFoundException {
+    public List<ProductQuantityDTO> openCart(Long customerId) throws CustomException {
         Customer customer = customerService.getCustomerById(customerId);
         Long orderId = orderService.getCurrentCustomerOrder(customerId).getOrderId();
 
@@ -84,7 +86,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 
     @Override
     @Transactional
-    public void clearCart(Long customerId) throws CustomerNotFoundException {
+    public void clearCart(Long customerId) throws CustomException {
         Customer customer = customerService.getCustomerById(customerId);
         Order order = orderService.getCurrentCustomerOrder(customerId);
 

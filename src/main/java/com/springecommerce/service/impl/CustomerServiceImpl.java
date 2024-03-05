@@ -2,13 +2,12 @@ package com.springecommerce.service.impl;
 
 import com.springecommerce.entity.Customer;
 import com.springecommerce.entity.Order;
-import com.springecommerce.error.CustomerAlreadyOwnUnconfimedOrderException;
-import com.springecommerce.error.CustomerNotFoundException;
+import com.springecommerce.error.CustomException;
 import com.springecommerce.repository.CustomerRepository;
 import com.springecommerce.service.CustomerService;
 import com.springecommerce.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +16,19 @@ import java.util.Optional;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    private OrderService orderService;
+
+    private final OrderService orderService;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, OrderService orderService) {
+        this.customerRepository = customerRepository;
+        this.orderService = orderService;
+    }
+
 
     @Override
-    public Customer saveCustomer(Customer customer) throws CustomerNotFoundException {
+    public Customer saveCustomer(Customer customer) {
 
         try {
             Customer savedCustomer = customerRepository.save(customer);
@@ -39,21 +43,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer login(String email, String password) throws CustomerNotFoundException {
+    public Customer login(String email, String password) throws CustomException {
         Optional<Customer> customer = customerRepository.findCustomerByEmailAndPassword(email, password);
         if (!customer.isPresent()) {
-            throw new CustomerNotFoundException("Worng email or Password");
+            throw new CustomException("Worng email or Password", HttpStatus.NOT_FOUND);
         }
         return customer.get();
     }
 
     @Override
-    public Customer getCustomerById(Long customerId) throws CustomerNotFoundException {
+    public Customer getCustomerById(Long customerId) throws CustomException {
 
         Optional<Customer> customer = customerRepository.findById(customerId);
 
         if (!customer.isPresent()) {
-            throw new CustomerNotFoundException("No such Customer with this id");
+            throw new CustomException("No such Customer with this id",HttpStatus.NOT_FOUND);
         }
         return customer.get();
     }
@@ -71,9 +75,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Boolean alreadyOwnUnconfirmedOrder(Customer customer) throws CustomerAlreadyOwnUnconfimedOrderException {
+    public Boolean alreadyOwnUnconfirmedOrder(Customer customer) throws CustomException {
         if (getUnconfirmedOrderId(customer) != null) {
-            throw new CustomerAlreadyOwnUnconfimedOrderException("Already have unconfirmed Order");
+            throw new CustomException("Already have unconfirmed Order",HttpStatus.NOT_ACCEPTABLE);
         }
         return false;
     }

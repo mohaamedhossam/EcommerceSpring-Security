@@ -20,19 +20,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Product {
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
-    private @NotBlank(
-            message = "please add product name"
-    ) String name;
-    private @NotBlank(
-            message = "please add product category"
-    ) String category;
-    private @NotNull(
-            message = "please add product price"
-    ) @PositiveOrZero(
-            message = "please add a valid positive price"
-    ) Integer price;
+
+    @NotBlank(message = "please add product name")
+    private String name;
+
+    @NotBlank(message = "please add product category")
+    private String category;
+
+    @NotNull(message = "please add product price")
+    @PositiveOrZero(message = "please add a valid positive price")
+    private Integer price;
 }

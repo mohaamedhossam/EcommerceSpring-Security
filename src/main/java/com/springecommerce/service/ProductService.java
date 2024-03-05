@@ -1,7 +1,8 @@
 package com.springecommerce.service;
 
 import com.springecommerce.entity.Product;
-import com.springecommerce.error.ProductNotFoundException;
+import com.springecommerce.error.CustomException;
+
 import java.util.List;
 
 public interface ProductService {
@@ -9,9 +10,9 @@ public interface ProductService {
 
     List<Product> getAllProducts();
 
-    Product getProductById(Long productId) throws ProductNotFoundException;
+    Product getProductById(Long productId) throws CustomException;
 
     List<Product> searchProducts(String keyword, String category, Integer minPrice, Integer maxPrice);
 
-    Product updateProductById(Long productId, Product product) throws ProductNotFoundException;
+    Product updateProductById(Long productId, Product product) throws CustomException;
 }
