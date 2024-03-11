@@ -40,7 +40,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         Map<String, Object> body = new LinkedHashMap();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
-        List<String> errors = ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+        List<String> errors =  ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         body.put("errors", errors);
         return new ResponseEntity(body, headers, status);
     }
